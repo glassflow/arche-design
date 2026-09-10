@@ -55,6 +55,10 @@ that does (a failure) is unmissable. Emotional goal: calm competence during an i
   string, never a relative phrase in a cell. `lib/time.ts` + `common/Timestamp`. (Chosen 2026-09-10.)
 - **Table heads.** One style everywhere: `.readout-label` (11px mono, uppercase, 0.1em tracking). A
   sortable head is a button with the chevron; nothing else looks sortable. Lists call the time column "Time".
+- **Ledger columns.** One identity column per row: the name on the first line, the one secondary fact the
+  name does not already carry on a second 11px mono line (Firings' identity cell is the reference). Never a
+  column that repeats a fact the name states — the Spans Model column went this way. IDs stay 12ch mono
+  with copy. (Chosen 2026-09-10.)
 - **Theme.** Light is the primary theme (paper). Dark exists and must keep the frame: chrome and content
   must not share one brown, rules must stay visible.
 - **Motion.** Glance surfaces (Home, readouts) may animate; work surfaces (lists, detail) snap.

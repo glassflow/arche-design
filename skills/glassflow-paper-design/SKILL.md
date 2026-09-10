@@ -157,6 +157,10 @@ State is always text, never colour alone. Keep the word and the test id when re-
   tokens, cost, latency bar scaled to the visible max. Counts right-aligned. IDs copyable (`CopyButton`).
 - Registers (rules) and ledgers (firings) are tables with mono key first: `ID · ALERT · CONDITION ·
   FIRINGS · STATE`; ledger rows open with the stamp.
+- One identity column per row: the name on the first line, the one secondary fact the name does not
+  already carry on a second 11px mono line (the firings identity cell; the spans row's served model). Never
+  a column that repeats a fact the name states — GenAI span names are `{operation} {model}`, so a Model
+  column beside them is a duplicate. Review-time only: a redundant column has no lintable signature.
 - Health / summary strips are one mono line: `2,260 traces · error rate 1.2% · p50 4.18s · p95 7.82s`.
 - Meta on a detail page is spec-sheet cells (mono key above value) under a rule. Errors are typeset
   callouts between two 1px rose rules, traceback mono on the paper.
