@@ -1,0 +1,248 @@
+/*
+ * dress.css — the paper "dress": the class hooks that turn tokens into the
+ * field-manual look. Copied from argus-ui src/app/base.css on 2026-09-10
+ * (the TREATMENT B block plus the display utilities it relies on).
+ *
+ * SOURCE OF TRUTH is argus-ui's base.css; re-copy rather than hand-edit.
+ * Fonts are provided by the consumer as CSS variables: --font-inter,
+ * --font-geist-mono, --font-doto (argus-ui loads them with next/font and maps
+ * --font-sans / --font-mono / --font-pixel in @theme inline).
+ *
+ * Not copied on purpose (vestigial in the app, see SKILL.md): the seed
+ * .title-*/.body-*/.caption-* scale, .glass-panel/.glass-tile/.ambient-glow,
+ * .card-enter, the segmented .venus-meter gradient. Motion keyframes that
+ * carry information (row-blip, sheet slides) live in the app's base.css.
+ */
+
+body {
+  background: hsl(var(--background));
+  color: hsl(var(--foreground));
+  font-family: var(--font-sans), system-ui, sans-serif;
+}
+
+/* Dot-matrix display numerals (Doto). Headline KPI values ONLY — one hero per
+ * page; dense tables and duration columns stay tabular sans/mono. */
+.pixel-value {
+  font-family: var(--font-pixel), monospace;
+  font-weight: 900;
+  letter-spacing: 0.02em;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Quantized motion: sweeps jump in discrete steps — the temporal twin of the
+ * dot-matrix aesthetic. Consumer-app springs are off-brand. */
+:root {
+  --motion-blocks: steps(8, jump-end);
+  --motion-fill-ms: 600ms;
+}
+
+/* =====================================================================
+ * TREATMENT B — "Field manual" (design/treatment-b-field-manual).
+ * Object: a printed standards manual on cream stock. Cream is paper, not a
+ * tint; hierarchy comes from the type scale and rules, never from boxes. No
+ * panel borders in the content area — regions are separated by 1px rules and
+ * whitespace and sit directly on the paper. Every chart is a numbered figure
+ * with a mono caption; states are set typographically; Doto is one hero per
+ * page; amber is the one primary action, the selected row, and "live".
+ * The class hooks are shared with Treatment A so the TSX skeleton is the same
+ * and only the dress differs.
+ * ===================================================================== */
+
+/* The manual's page column: one measure for every page — header, content and
+ * the full-height views alike. It fills the pane up to 1600px and, on a wide
+ * desk, keeps roughly 7% of the pane on each side, so the sheet still reads
+ * as a page without leaving most of the screen empty. Gutters (padding) are
+ * the caller's — px-5 / sm:px-10. */
+.manual-column {
+  width: 100%;
+  margin-inline: auto;
+  max-width: clamp(1280px, 86%, 1600px);
+}
+
+/* A "plate" here is a section of the page: a rule above, air below, no box. */
+.plate {
+  background: transparent;
+  border: 0;
+  border-top: 1px solid hsl(var(--rule-strong));
+  border-radius: 0;
+}
+/* A figure grid: figures side by side, separated by whitespace (column gap)
+ * and a rule above the whole row — never by boxes. */
+.plate-grid {
+  display: grid;
+  gap: 2rem 3rem;
+  background: transparent;
+  border: 0;
+  border-top: 1px solid hsl(var(--rule-strong));
+  border-radius: 0;
+  padding-top: 2rem;
+}
+.plate-grid > * {
+  background: transparent;
+  min-width: 0;
+}
+.cell {
+  padding: 0;
+  min-width: 0;
+}
+/* Registers/ledgers (rule lists, rails, channel lists): rows carry their own
+ * hairline; the list gets the rule above and no box. */
+ul.plate { padding-top: 0; }
+
+/* Captions and readouts — the type scale is the identity. */
+.readout-label {
+  font-family: var(--font-mono), monospace;
+  font-size: 0.6875rem;
+  line-height: 1.4;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: hsl(var(--foreground) / 0.72);
+  font-variant-numeric: tabular-nums;
+}
+/* Numbered figure caption: "FIG. 01 — TRACE VOLUME · 7D". The counter is
+ * reset per view (.manual) and restarts on every page. Generated content, so
+ * the DOM text (what the e2e specs read) is untouched. */
+.manual { counter-reset: fig; }
+.readout-label.fig::before {
+  counter-increment: fig;
+  content: 'Fig. ' counter(fig, decimal-leading-zero) ' \2014  ';
+  color: hsl(var(--foreground));
+}
+.readout-value {
+  font-size: 1.5rem;
+  line-height: 1.1;
+  font-weight: 500;
+  letter-spacing: -0.015em;
+  font-variant-numeric: tabular-nums;
+  color: hsl(var(--foreground));
+}
+.readout-sub {
+  font-size: 0.8125rem;
+  line-height: 1.45;
+  color: hsl(var(--foreground) / 0.7);
+  font-variant-numeric: tabular-nums;
+}
+.readout-unit {
+  font-family: var(--font-mono), monospace;
+  font-size: 0.6875rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: hsl(var(--foreground) / 0.55);
+}
+/* The one Doto numeral per page (motif budget) — larger on paper. */
+.hero-value {
+  font-family: var(--font-pixel), monospace;
+  font-weight: 900;
+  font-size: 4.75rem;
+  line-height: 0.95;
+  letter-spacing: 0.01em;
+  font-variant-numeric: tabular-nums;
+  color: hsl(var(--foreground));
+}
+/* The hero numeral as a link. A hairline in the light rule tone, set well
+ * below the pixel glyphs' bottom row so it reads as a rule under the figure
+ * and not a ninth row of it; hover and focus bring it up to the foreground,
+ * the same darkening every readout link does. Colour never changes — the
+ * numeral is the page's one Doto figure and stays ink. */
+.hero-link {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-decoration-color: hsl(var(--rule));
+  text-underline-offset: 0.16em;
+  transition: text-decoration-color 120ms ease-out;
+}
+.hero-link:hover,
+.hero-link:focus-visible {
+  text-decoration-color: hsl(var(--foreground));
+}
+.hero-link:focus-visible {
+  outline: 2px solid hsl(var(--ring));
+  outline-offset: 6px;
+}
+/* Status system, typeset: a mono word with a 1px rule under it in the outcome
+ * / liveness colour. No squares in registers and tables (typography carries
+ * the state); the standalone .sq-* glyphs stay for the tree and the sheet. */
+.state {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  white-space: nowrap;
+  font-family: var(--font-mono), monospace;
+  font-size: 0.6875rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: hsl(var(--foreground) / 0.85);
+  font-variant-numeric: tabular-nums;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+  text-decoration-color: hsl(var(--foreground) / 0.35);
+}
+.state .state-square { display: none; }
+.state-failed { color: hsl(var(--status-error)); text-decoration-color: hsl(var(--status-error)); }
+.state-recovered { color: hsl(var(--success-soft-foreground)); text-decoration-color: hsl(var(--status-running)); }
+.state-degraded { color: hsl(var(--status-warning)); text-decoration-color: hsl(var(--status-warning)); }
+.state-live { color: hsl(var(--foreground)); text-decoration-color: hsl(var(--brand)); text-decoration-thickness: 2px; }
+.state-stale { color: hsl(var(--foreground) / 0.55); text-decoration-style: dashed; }
+/* A clean shutdown: said goodbye, nothing to watch — dimmed ink, plain rule. */
+.state-stopped { color: hsl(var(--foreground) / 0.5); }
+/* No heartbeat at all (a traces-only agent, RIUS-708): known, not watched —
+ * the same dimmed ink under a fainter rule, so it never reads as a state. */
+.state-absent { color: hsl(var(--foreground) / 0.5); text-decoration-color: hsl(var(--foreground) / 0.2); }
+.state-square {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  flex: none;
+  border: 1px solid hsl(var(--foreground) / 0.5);
+  background: transparent;
+}
+.sq-failed { background: hsl(var(--status-error)); border-color: hsl(var(--status-error)); }
+.sq-recovered { background: hsl(var(--status-running)); border-color: hsl(var(--status-running)); }
+.sq-degraded { background: hsl(var(--status-warning)); border-color: hsl(var(--status-warning)); }
+.sq-live { background: hsl(var(--brand)); border-color: hsl(var(--brand)); }
+.sq-stale { border-style: dashed; }
+
+/* Print logic for bars: a 2px rule on a hairline track. */
+.hairline-track {
+  position: relative;
+  display: inline-block;
+  height: 5px;
+  border-bottom: 1px solid hsl(var(--rule));
+  vertical-align: middle;
+}
+.hairline-fill {
+  position: absolute;
+  left: 0;
+  bottom: -1px;
+  height: 2px;
+  background: hsl(var(--foreground) / 0.8);
+}
+/* A still-running trace's rule: amber = live, the second axis of the status
+ * system. It is excluded from the ruler's scale (see TracesTable), so a run
+ * that grows every poll can't flatten every settled row. */
+.hairline-fill-live { background: hsl(var(--brand)); }
+/* Block meters become thin rules: the track is a hairline, the fill a 2px
+ * rule — the segmented gradient is off. */
+.venus-meter {
+  background-image: none;
+  background-color: currentColor;
+  top: 3px !important;
+  bottom: auto !important;
+  height: 2px;
+}
+
+/* Table and register rows: hairline rules only, 40px, no zebra; the selected
+ * or hovered row takes the 2px amber edge — the list's only amber. */
+.register-row {
+  border-bottom: 1px solid hsl(var(--rule));
+  box-shadow: inset 0 0 0 0 transparent;
+  transition: box-shadow 120ms ease;
+}
+.register-row:hover,
+.register-row[aria-selected='true'],
+.register-row[data-active='true'] {
+  box-shadow: inset 2px 0 0 hsl(var(--brand));
+}
+
