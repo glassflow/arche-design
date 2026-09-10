@@ -51,7 +51,8 @@ that does (a failure) is unmissable. Emotional goal: calm competence during an i
   ink.
 - **Time.** Two grammars, no more. An instant is a UTC stamp, `2026-07-03 11:57Z` (seconds on a trace
   header, milliseconds in the span inspector), set in mono; "2mo ago" / "in 27d" lives in its tooltip. A
-  calendar day (running heads, the range picker, billing) is `Jun 26, 2026`. Never a locale-dependent
+  calendar day (running heads, the range picker, billing) is `Jun 26, 2026`. In a narrow ledger column
+  the stamp may stack, date over clock (`Timestamp stacked`), still one string. Never a locale-dependent
   string, never a relative phrase in a cell. `lib/time.ts` + `common/Timestamp`. (Chosen 2026-09-10.)
 - **Table heads.** One style everywhere: `.readout-label` (11px mono, uppercase, 0.1em tracking). A
   sortable head is a button with the chevron; nothing else looks sortable. Lists call the time column "Time".

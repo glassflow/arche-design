@@ -139,6 +139,9 @@ State is always text, never colour alone. Keep the word and the test id when re-
 
 - **An instant** is a UTC stamp in mono, in the cell: `2026-07-03 11:57Z`. Seconds on a trace header,
   milliseconds in the span inspector. The relative phrase ("2mo ago", "in 27d") lives in its tooltip only.
+  In a narrow ledger column the stamp may stack, date over clock (`<Timestamp stacked>`, 108px — the head
+  "FIRST SEEN" needs it, the cell would take 96); the text
+  keeps its space so it stays one string to search, copy and assert.
 - **A calendar day** is `Jun 26, 2026` — running heads, the range picker, billing.
 - Never a locale-dependent string (`toLocaleString`, `Intl` with the user locale), never a relative phrase
   in a cell, never three forms of one instant.
