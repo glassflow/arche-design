@@ -9,7 +9,8 @@ GlassFlow's design systems as Claude Code skills. One skill per visual language;
 | [`skills/glassflow-etl-ui-design`](./skills/glassflow-etl-ui-design/SKILL.md) | ClickHouse ETL UI (`glassflow-ui`) — legacy | Dark warm glass, Archivo + Inter, `#ffa24b` accent, 4px grid, spring motion. Kept because it is good and reusable for that product family; not for Rius or Tares. |
 
 The sibling repo [`arche-ui`](https://github.com/glassflow/arche-ui) holds the product-agnostic
-frontend architecture (tokens contract, guardrails, proxy routes, …). This repo holds what a product
+frontend architecture (tokens contract, guardrails, proxy routes, …) — its doc 18 *Design governance*
+is the method these skills plug into (`.impeccable.md`, field manual, critique, the `design-contract` gate). This repo holds what a product
 *looks* like; a fork of arche-ui picks one skill from here.
 
 ## Install

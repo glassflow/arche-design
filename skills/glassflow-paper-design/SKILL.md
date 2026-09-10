@@ -142,7 +142,8 @@ State is always text, never colour alone. Keep the word and the test id when re-
 - **A calendar day** is `Jun 26, 2026` — running heads, the range picker, billing.
 - Never a locale-dependent string (`toLocaleString`, `Intl` with the user locale), never a relative phrase
   in a cell, never three forms of one instant.
-- API: `lib/time.ts` — `formatStampUTC(iso, 'minute' | 'second' | 'ms')`, `formatRelative`, `formatUntil`,
+- API: `lib/time.ts` — `formatStampUTC(iso, 'minute' | 'second' | 'ms')`, `formatDayUTC(value, { year })`,
+  `formatRelative`, `formatUntil`,
   `formatDistance`; component `common/Timestamp` (`<time dateTime>` mono, tooltip = the phrase; `useNow`
   ticks every 30s). The Time column is 136px (8.5rem) for 17ch of 12px mono; lists name it "Time".
 
@@ -178,11 +179,13 @@ hairline. Layout: `PageHeader` (eyebrow / title / description), `ExplorerTabs`, 
 
 ## Guardrails
 
-Mechanical (CI in argus-ui; port to every consumer): `token-contract` ESLint (no colour literals),
-`boundaries` (dependency-cruiser), `bundle-budget`, e2e in mock mode. Review-time, until they are lint
-rules: no `toLocaleString` / relative time outside `lib/time.ts`; every table head through the head
-primitive; no new `rounded-*`; no new dialog for URL-worthy content; a caveat beside every capped or
-sampled number; focus visible on every control; state as text.
+Mechanical (CI in argus-ui; port to every consumer — seeds in arche-ui `seed/ci/`): `token-contract`
+(no colour literals), `design-contract` (`time-contract`: no `toLocaleDateString` / `Intl.DateTimeFormat`
+outside the time module, no bare `toLocaleString()`, relative formatters only in `Timestamp`;
+`head-contract`: no raw `<th>` outside `ui/table`; `radius-contract`: no `rounded-sm…3xl`), `boundaries`,
+`bundle-budget`, e2e in mock mode. Review-time: no new dialog for URL-worthy content; a caveat beside
+every capped or sampled number; focus visible on every control; state as text; the time module owns
+`formatStampUTC` (instant) and `formatDayUTC` (calendar day) — never a third formatter elsewhere.
 
 Process: a convention change lands with its codification. `.impeccable.md` is the short form (update
 when the direction moves), the field manual is the long form (per-surface decisions and gate results),
