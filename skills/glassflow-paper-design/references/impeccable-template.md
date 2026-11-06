@@ -60,7 +60,8 @@ that does (a failure) is unmissable. Emotional goal: calm competence during an i
 - **Ledger columns.** One identity column per row: the name on the first line, the one secondary fact the
   name does not already carry on a second 11px mono line (Firings' identity cell is the reference). Never a
   column that repeats a fact the name states — the Spans Model column went this way. IDs stay 12ch mono
-  with copy. (Chosen 2026-09-10.)
+  with copy. (Chosen 2026-09-10.) An id is never the only thing a control says: a button, link or chip
+  names what it opens and keeps the id in its `title` or copy affordance. (Chosen 2026-11-06.)
 - **Theme.** Light is the primary theme (paper). Dark exists and must keep the frame: chrome and content
   must not share one brown, rules must stay visible.
 - **Motion.** Glance surfaces (Home, readouts) may animate; work surfaces (lists, detail) snap.
