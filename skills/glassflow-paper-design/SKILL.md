@@ -158,6 +158,9 @@ State is always text, never colour alone. Keep the word and the test id when re-
   never offer a sort the API cannot do.
 - Outcome-first column order on traces: time, outcome word, name, id (fixed 12ch mono), spans, errors,
   tokens, cost, latency bar scaled to the visible max. Counts right-aligned. IDs copyable (`CopyButton`).
+- An id is never the only thing a control says. A button, link or chip names what it opens (span name,
+  agent, stamp) and keeps the id in its `title` or copy affordance: 12ch of `a3f91c0e2b` separates rows by
+  eye, not by meaning. Review-time only: `{span.name}` and `{spanId}` look the same to the AST.
 - Registers (rules) and ledgers (firings) are tables with mono key first: `ID · ALERT · CONDITION ·
   FIRINGS · STATE`; ledger rows open with the stamp.
 - One identity column per row: the name on the first line, the one secondary fact the name does not
@@ -192,7 +195,7 @@ outside the time module, no bare `toLocaleString()`, relative formatters only in
 `head-contract`: no raw `<th>` outside `ui/table`; `radius-contract`: no `rounded-sm…3xl`), `boundaries`,
 `bundle-budget`, e2e in mock mode. Review-time: no new dialog for URL-worthy content; a caveat beside
 every capped or sampled number; focus visible on every control; state as text; the time module owns
-`formatStampUTC` (instant) and `formatDayUTC` (calendar day) — never a third formatter elsewhere.
+`formatStampUTC` (instant) and `formatDayUTC` (calendar day) — never a third formatter elsewhere; no opaque id as the only text of a control.
 
 Process: a convention change lands with its codification. `.impeccable.md` is the short form (update
 when the direction moves), the field manual is the long form (per-surface decisions and gate results),
