@@ -1,7 +1,8 @@
 /*
- * tokens.css — the GlassFlow paper token layer (colour only).
+ * tokens.css — the GlassFlow paper token layer: the colour tokens, plus the
+ * radius, elevation and font-family mappings that ship with them.
  *
- * SOURCE OF TRUTH for the paper colour tokens is THIS FILE, in arche-design.
+ * SOURCE OF TRUTH for the paper tokens is THIS FILE, in arche-design.
  * Apps vendor a tagged copy with `npm run paper:sync` and never edit it by
  * hand. A change is made here, in a PR; after the merge the merge commit is
  * tagged `paper-tokens-vN`, and each app then re-vendors that tag in its own
@@ -10,7 +11,9 @@
  * `paper-tokens-v1` on, this file leads and argus-ui follows as a consumer.
  *
  * Contract: every value is an HSL TRIPLET ("56 32% 91%"), consumed as
- * hsl(var(--token)) or hsl(var(--token) / alpha). Two layers:
+ * hsl(var(--token)) or hsl(var(--token) / alpha). The one exception is a soft
+ * tint that is defined with its alpha ("40 100% 50% / 15%", the accent-soft
+ * pair): consume it whole, as hsl(var(--agency-accent-soft)). Two layers:
  *   --agency-*   raw values from the design agency's HeroUI Kit V3 Figma
  *                variables (docs/design/heroui-v3-figma-variables.json).
  *                Components NEVER reference these.
@@ -26,10 +29,11 @@
  */
 
 /*
- * theme.css — THE token definitions. This file (with base.css) is the only
- * place raw color values are allowed; everywhere else colors resolve through
- * `hsl(var(--token))` or a mapped Tailwind utility (enforced by the
- * token-contract CI gate). See docs/arche-ui/08-design-tokens.md.
+ * The token definitions (the text below is carried over from argus-ui's
+ * theme.css). This file is the only place raw colour values are allowed;
+ * everywhere else colours resolve through `hsl(var(--token))` or a mapped
+ * Tailwind utility (a consumer enforces that with its token-contract gate).
+ * See arche-ui doc 08, design tokens.
  *
  * VENUS (design proposal 002, design agency teaser — see
  * docs/design/venus-002-demo.md): cream-first light canvas ("Pure"), deep
@@ -73,6 +77,7 @@
   --agency-accent: 40 100% 50%; /* accent/accent #ffac00 */
   --agency-accent-hover: 41 100% 73%; /* accent/accent-hover #ffd274 (fixed across modes, like accent) */
   --agency-accent-foreground: 30 100% 6%; /* accent/accent-foreground = eclipse (fixed across modes) */
+  --agency-accent-soft: 40 100% 50% / 15%; /* accent/accent-soft (light) #ffac0026: the amber tint behind a selected or hovered row; alpha 15% = 0x26 */
   --agency-snow: 0 0% 99%; /* base colors/snow #fcfcfc (dark-mode foreground) */
 
   /* Status ramps per kit V2 (RIUS-52 Q2 ANSWERED 2026-08-26): success → jade,
@@ -105,6 +110,7 @@
   --agency-dark-muted-foreground: 36 26% 68%; /* foreground/muted dark #c2b197 */
   --agency-dark-segment: 30 90% 25%; /* segment dark #783e06 — the ladder rung above default, used to float overlays/popovers */
   --agency-dark-separator: 29 59% 34%; /* separator/separator dark #895523 */
+  --agency-dark-accent-soft: 40 100% 50% / 12%; /* accent/accent-soft (dark) #ffac001f: the dark twin of --agency-accent-soft; alpha 12% = 0x1f */
 }
 
 :root {

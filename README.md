@@ -33,7 +33,7 @@ file carries a first-line comment naming the tag and commit it came from.
 
 | Tag | Covers |
 |---|---|
-| `paper-tokens-vN` | the CSS under `skills/glassflow-paper-design/references/`: the colour tokens (`tokens.css`), the role layer and the motion classes |
+| `paper-tokens-vN` | three files under `skills/glassflow-paper-design/references/`: `tokens.css` (the tokens), `paper-theme.css` (the role layer) and `paper-motion.css` (the motion classes). `dress.css` is not covered by a tag |
 | `paper-kit-vN` | `packages/paper-kit/` |
 
 `N` counts up from 1 for each scheme. A tag is never moved or deleted: a mistake is fixed by the next `N`.
