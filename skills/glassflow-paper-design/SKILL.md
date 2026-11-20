@@ -9,10 +9,13 @@ description: Design system for GlassFlow's current products — Rius (the AI-age
 graphics standards, Swiss grid, Tufte. Calm competence during an incident. Nothing shouts, so the one
 thing that does (a failure) is unmissable.
 
-Product = **Rius** (company: GlassFlow). Sister product = **Tares**. Reference implementation =
-`argus-ui` (`src/app/theme.css` tokens, `src/app/base.css` dress, `src/components/common/*` primitives,
-`docs/design/2026-09-07-treatment-b-field-manual.md` decision log). When this skill and the app disagree,
-the app is newer: read the app, then fix this skill.
+Product = **Rius** (company: GlassFlow). Sister product = **Tares**. The source of the paper tokens is
+this repository, arche-design (`references/tokens.css`, tagged `paper-tokens-vN`); apps vendor a tagged
+copy and never edit it. `argus-ui` (`src/app/theme.css` tokens, `src/app/base.css` dress,
+`src/components/common/*` primitives, `docs/design/2026-09-07-treatment-b-field-manual.md` decision log)
+is the earlier reference implementation and follows later as a consumer. Until it does, where the two
+disagree on a token value, change it here first, tag it, then re-vendor; see the README, "How the paper
+skill is kept true".
 
 The old dark warm-glass system (Archivo, `#ffa24b`) belongs to the ClickHouse ETL UI and lives in the
 `glassflow-etl-ui-design` skill. Never mix the two.
@@ -23,7 +26,8 @@ The old dark warm-glass system (Archivo, `#ffa24b`) belongs to the ClickHouse ET
    `references/impeccable-template.md` there and adapt only the **Users** block.
 2. This file.
 3. `references/tokens.css` (the token layer), `references/dress.css` (the class hooks) — when bootstrapping
-   a new consumer or checking a value. In `argus-ui` read `theme.css` / `base.css` directly instead.
+   a new consumer or checking a value. `tokens.css` here is the source; a consumer reads its vendored
+   copy (never edits it).
 
 ## Principles (in priority order)
 
@@ -178,7 +182,7 @@ information, never choreography: the count-up (`TickValue`), the new-row blip (a
 `steps(8)`), meter fills in discrete blocks (`--motion-blocks: steps(8, jump-end)`), sheet slides. Every
 animation has a `prefers-reduced-motion` off-switch. No springs, no staggered card entrances.
 
-## Primitives to reuse before adding anything (argus-ui `src/components`)
+## Primitives to reuse before adding anything (reference set in `argus-ui` `src/components`, a consumer that follows this repo)
 
 `common/`: `Timestamp`, `RegisterHead`, `FigureTitle`, `StatusBadge` + `StaleWord`, `RecoveredBadge`,
 `TickValue`, `DataTable`, `VirtualizedTable`, `EmptyState`, `CopyButton`, `JsonViewer`, `Markdown`

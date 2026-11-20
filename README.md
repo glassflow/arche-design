@@ -25,12 +25,34 @@ Skills are discovered by the `name:` in their frontmatter; keep it equal to the 
 
 ## How the paper skill is kept true
 
-`argus-ui` is the source of truth for the paper direction: `src/app/theme.css` (tokens),
-`src/app/base.css` (dress), `.impeccable.md` (canonical short form), and
-`docs/design/2026-09-07-treatment-b-field-manual.md` (decision log). The skill's
-`references/tokens.css` and `references/dress.css` are dated copies for bootstrapping a new consumer —
-re-copy them when the app moves, never hand-edit. A convention change in the app lands with its
-codification (`.impeccable.md` + field manual) in the same PR; this repo follows.
+**arche-design is the source** of the paper tokens. Apps (the Tares console, the desktop app, and
+`argus-ui` later) vendor a tagged copy with `npm run paper:sync` and never edit it by hand. A vendored
+file carries a first-line comment naming the tag and commit it came from.
+
+### Tags
+
+| Tag | Covers |
+|---|---|
+| `paper-tokens-vN` | the CSS under `skills/glassflow-paper-design/references/`: the colour tokens (`tokens.css`), the role layer and the motion classes |
+| `paper-kit-vN` | `packages/paper-kit/` |
+
+`N` counts up from 1 for each scheme. A tag is never moved or deleted: a mistake is fixed by the next `N`.
+
+### Changing a token
+
+1. Change it here, in a PR. State in the PR how you checked it in a consumer (there is no CI in this
+   repo): copy the changed files into the consumer's vendored place, or run its `paper:sync` against your
+   branch, and run the consumer's own gate.
+2. After the merge, tag the merge commit (`git fetch origin && git tag paper-tokens-vN <merge sha> &&
+   git push origin paper-tokens-vN`, one tag by name) and check it with
+   `git ls-remote --tags origin paper-tokens-vN`.
+3. Each app runs `npm run paper:sync -- --tokens paper-tokens-vN` in its own PR. That PR is where the
+   change is reviewed in the app.
+
+Until `argus-ui` follows as a consumer, its `src/app/theme.css` and `src/app/base.css` stay the
+reference for the dress (`references/dress.css`), which is a dated copy for bootstrapping a new consumer:
+re-copy it when the app moves, never hand-edit. A convention change lands with its codification
+(`.impeccable.md` + field manual) in the same PR.
 
 ## Layout
 

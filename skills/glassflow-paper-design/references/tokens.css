@@ -1,10 +1,13 @@
 /*
- * tokens.css — the GlassFlow paper token layer, copied from argus-ui
- * src/app/theme.css on 2026-09-10 (branch design/polish-time-heads-0910).
+ * tokens.css — the GlassFlow paper token layer (colour only).
  *
- * SOURCE OF TRUTH is argus-ui's theme.css; this file is a bootstrap copy for
- * a new consumer (Tares, a portal, a docs site). When the two disagree, the
- * app wins — re-copy, do not hand-edit here.
+ * SOURCE OF TRUTH for the paper colour tokens is THIS FILE, in arche-design.
+ * Apps vendor a tagged copy with `npm run paper:sync` and never edit it by
+ * hand. A change is made here, in a PR; after the merge the merge commit is
+ * tagged `paper-tokens-vN`, and each app then re-vendors that tag in its own
+ * PR. See README.md, "How the paper skill is kept true". The values began as a
+ * copy of argus-ui src/app/theme.css (2026-09-10); from the first
+ * `paper-tokens-v1` on, this file leads and argus-ui follows as a consumer.
  *
  * Contract: every value is an HSL TRIPLET ("56 32% 91%"), consumed as
  * hsl(var(--token)) or hsl(var(--token) / alpha). Two layers:
