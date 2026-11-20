@@ -33,7 +33,7 @@ file carries a first-line comment naming the tag and commit it came from.
 
 | Tag | Covers |
 |---|---|
-| `paper-tokens-vN` | the files under `skills/glassflow-paper-design/references/` that exist at the tagged commit: `tokens.css` (the tokens), `paper-theme.css` (the role layer) and `paper-motion.css` (the motion classes). `paper-theme.css` and `paper-motion.css` are added by later PRs, so `paper-tokens-v1` has `tokens.css` only. `dress.css` is not covered by a tag |
+| `paper-tokens-vN` | the files under `skills/glassflow-paper-design/references/` that exist at the tagged commit: `tokens.css` (the tokens), `paper-theme.css` (the role layer) and `paper-motion.css` (the motion classes). `paper-tokens-v1` is on the commit that added `tokens.css` alone, before the other two existed; from `paper-tokens-v2` on the tag covers all three. `dress.css` is not covered by a tag |
 | `paper-kit-vN` | `packages/paper-kit/` |
 
 `N` counts up from 1 for each scheme. A tag is never moved or deleted: a mistake is fixed by the next `N`.
@@ -58,7 +58,7 @@ re-copy it when the app moves, never hand-edit. A convention change lands with i
 
 ```
 skills/
-  glassflow-paper-design/      SKILL.md, references/{tokens.css, dress.css, impeccable-template.md}
+  glassflow-paper-design/      SKILL.md, references/{tokens.css, paper-theme.css, paper-motion.css, dress.css, impeccable-template.md}
   glassflow-etl-ui-design/     SKILL.md, DESIGN.md, CLAUDE.md, references/DESIGN.md, fonts/ (Archivo, Inter — OFL)
 scripts/install.sh             symlink installer
 ```

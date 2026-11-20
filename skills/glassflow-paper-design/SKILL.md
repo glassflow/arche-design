@@ -10,8 +10,8 @@ graphics standards, Swiss grid, Tufte. Calm competence during an incident. Nothi
 thing that does (a failure) is unmissable.
 
 Product = **Rius** (company: GlassFlow). Sister product = **Tares**. The source of the paper tokens is
-this repository, arche-design (`references/tokens.css`, tagged `paper-tokens-vN`); apps vendor a tagged
-copy and never edit it. `argus-ui` (`src/app/theme.css` tokens, `src/app/base.css` dress,
+this repository, arche-design (`references/tokens.css`, `references/paper-theme.css` and
+`references/paper-motion.css`, tagged `paper-tokens-vN`); apps vendor a tagged copy and never edit it. `argus-ui` (`src/app/theme.css` tokens, `src/app/base.css` dress,
 `src/components/common/*` primitives, `docs/design/2026-09-07-treatment-b-field-manual.md` decision log)
 is the earlier reference implementation and follows later as a consumer. Until it does, where the two
 disagree on a token value, change it here first, tag it, then re-vendor; see the README, "How the paper
@@ -26,9 +26,11 @@ The old dark warm-glass system (Archivo, `#ffa24b`) belongs to the ClickHouse ET
    `references/impeccable-template.md` there and adapt only the **Users** block.
 2. This file.
 3. `references/tokens.css` (the token layer), `references/paper-theme.css` (the role layer: the roles
-   components read and the utilities they map to), `references/dress.css` (the class hooks) — when
-   bootstrapping a new consumer or checking a value. `tokens.css` and `paper-theme.css` here are the
-   source; a consumer reads its vendored copy (never edits it).
+   components read and the utilities they map to), `references/paper-motion.css` (durations, curves and
+   the motion classes), `references/dress.css` (the class hooks) — when bootstrapping a new consumer or
+   checking a value. The three tagged CSS files here are the source; a consumer reads its vendored copy
+   (never edits it). A consumer imports `paper-theme.css` and `paper-motion.css`, never `tokens.css`
+   with them (see Tokens below).
 
 ## Principles (in priority order)
 
@@ -44,9 +46,14 @@ The old dark warm-glass system (Archivo, `#ffa24b`) belongs to the ClickHouse ET
 
 ## Tokens (the contract)
 
-- Every colour is an **HSL triplet** consumed as `hsl(var(--token))` / `hsl(var(--token) / a)` or a mapped
-  Tailwind utility (`bg-background`, `text-status-error`, `border-rule`). No literals in components: an
-  ESLint gate (`token-contract`) fails hex, `rgb()`, and raw Tailwind colour utilities outside `theme.css`.
+- In `tokens.css` every colour is an **HSL triplet** consumed as `hsl(var(--token))` / `hsl(var(--token) / a)`
+  or a mapped Tailwind utility (`bg-background`, `text-status-error`, `border-rule`). `paper-theme.css`,
+  the file an app imports, carries the same palette as `--kit-*` hex values and maps the same roles to
+  utilities. **Import `paper-theme.css`, never `tokens.css` with it**: they define 28 of the same names
+  (`--accent`, `--popover`, the `--color-*` entries) in incompatible forms, and the later import wins
+  silently. `tokens.css` is the reference the `--kit-*` values are checked against. No literals in
+  components: an ESLint gate (`token-contract`) fails hex, `rgb()`, and raw Tailwind colour utilities
+  outside `theme.css`.
 - **Two layers.** `--agency-*` = the design agency's HeroUI Kit V3 Figma variables, verbatim. Components
   never reference them. Semantic tokens alias them: `--background` (cream #f0efe2), `--foreground` (ink
   #1e0f00), `--rule` (hairline #d8d5bc) and `--rule-strong` (#b3ad92, section rule), `--brand` / `--primary`

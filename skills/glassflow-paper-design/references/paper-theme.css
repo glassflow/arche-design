@@ -13,6 +13,11 @@
  * `npm run paper:sync` and never edits it. A change is made here, in a PR, then tagged.
  * See README.md, "How the paper skill is kept true".
  *
+ * Import this file, never tokens.css with it. tokens.css is the reference the --kit-*
+ * values are checked against, not a stylesheet to load beside this one: the two define 28
+ * of the same names (--accent, --popover and the `@theme inline` --color-* and --font-*
+ * entries) in incompatible forms, so the later import wins silently.
+ *
  * What an app brings itself:
  * - Fonts. Only the family NAMES are here (the `@theme` block below). Each app loads its
  *   own font files (`@import`, `@font-face`), since where they come from differs.
@@ -56,7 +61,7 @@
 
    RULES: no color literal below these token layers; new micro-labels/badges/code use
    var(--mono), var(--pixel) is for headline numerals only; when the kit changes, change
-   tokens.css here first, tag it, then re-vendor, then --kit-* here. */
+   tokens.css first, then the --kit-* values in this file, in one PR; tag it; consumers re-vendor. */
 :root {
   --kit-background: #f0efe2;          /* background/background */
   --kit-surface: #faf9ec;             /* surface/surface */
