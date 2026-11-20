@@ -25,9 +25,10 @@ The old dark warm-glass system (Archivo, `#ffa24b`) belongs to the ClickHouse ET
 1. The project's `.impeccable.md` (root). It carries users, brand, direction, principles. If absent, copy
    `references/impeccable-template.md` there and adapt only the **Users** block.
 2. This file.
-3. `references/tokens.css` (the token layer), `references/dress.css` (the class hooks) — when bootstrapping
-   a new consumer or checking a value. `tokens.css` here is the source; a consumer reads its vendored
-   copy (never edits it).
+3. `references/tokens.css` (the token layer), `references/paper-theme.css` (the role layer: the roles
+   components read and the utilities they map to), `references/dress.css` (the class hooks) — when
+   bootstrapping a new consumer or checking a value. `tokens.css` and `paper-theme.css` here are the
+   source; a consumer reads its vendored copy (never edits it).
 
 ## Principles (in priority order)
 
