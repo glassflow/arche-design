@@ -13,7 +13,11 @@
  * Contract: every value is an HSL TRIPLET ("56 32% 91%"), consumed as
  * hsl(var(--token)) or hsl(var(--token) / alpha). The one exception is a soft
  * tint that is defined with its alpha ("40 100% 50% / 15%", the accent-soft
- * pair): consume it whole, as hsl(var(--agency-accent-soft)). Two layers:
+ * pair). It is mapped whole to a semantic token (--accent-soft in
+ * paper-theme.css, the utility bg-brand-soft), and components use that token,
+ * never the --agency-* name. Do not add an alpha to it: hsl(var(--x) / a) is
+ * invalid CSS for these two, because the alpha is already in the value. Two
+ * layers:
  *   --agency-*   raw values from the design agency's HeroUI Kit V3 Figma
  *                variables (docs/design/heroui-v3-figma-variables.json).
  *                Components NEVER reference these.
