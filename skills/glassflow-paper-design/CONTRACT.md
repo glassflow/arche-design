@@ -8,8 +8,8 @@ The contract is written once, here. An app's own `AGENTS.md` points at this page
 specific to the app: its folders, its registers and baselines, the exact commands of its gate.
 
 Two surfaces follow it today: the Tares console and the Tares desktop app. Rius's console joins later
-(TR-1561). A line ending in `(console: ...)` or `(desktop: ...)` names the ticket that brings that app
-under the rule where it is not there yet.
+(TR-1561). Where a surface is not under a rule yet, the page says so and names the ticket that brings it
+there, as it does for embedded mode and the drift workflow.
 
 ## Tokens
 
@@ -28,7 +28,7 @@ npm run paper:sync -- --tokens paper-tokens-vN --paper-kit paper-kit-vN
 ```
 
 Either flag may be left out; the part it names is then left as it is. The script refuses a dirty tree
-or an unknown tag, copies each file with a first line naming the tag and the commit it came from, and
+or an unknown tag, copies each code file with a first line naming the tag and the commit it came from, and
 writes `VENDORED.json` with the hash of every file. Only the sync touches the network; a build or a
 check never does.
 
@@ -54,8 +54,8 @@ The app takes the kit with the steps in [`packages/paper-kit/README.md`](../../p
 - **`@source`.** The app's main stylesheet has `@source "<path to the vendored src>";`, so Tailwind
   generates the classes the components carry.
 - **Strict types.** The kit type-checks under `strict`, `noUncheckedIndexedAccess`, target ES2023,
-  `jsx` `react-jsx` and `moduleResolution` `bundler`. The app compiles the vendored folder under its own
-  settings, and they must be at least these.
+  `jsx` `react-jsx` and `moduleResolution` `bundler`. An app compiles the vendored folder under the same
+  or looser settings of its own; it does not have to be as strict as the kit's check.
 - **The app's part.** Its own bare element rules (`button`, `input`) go in a cascade layer, and it
   supplies one global `:focus-visible` rule, because the kit's controls carry no focus ring of their own.
 
@@ -77,9 +77,9 @@ where they run, its registers and its baselines. Each check runs on the app's `.
 | 3 | **No shadow on anything in the page.** A panel is a 1px border, not a card. Only a floating layer (sheet, menu, popover) casts one, and it is `var(--sheet-shadow)`. | The shadow selector of `designContract`: stock `shadow-xs` to `shadow-2xl`, any other `shadow-[..]` and `boxShadow` in a style object fail. Same commands as rule 2. |
 | 4 | **The selected item is an inset bar in the accent**, `shadow-[inset_3px_0_0_var(--accent)]`, never a left or inline-start border wider than 1px. | The stripe selector of `designContract`. It reads classes and style objects in TSX; a stripe written in a CSS file is not seen and is caught in review. Same commands as rule 2. |
 | 5 | **Controls come from the kit.** In the app's own screens, no raw `<button>`, `<input>`, `<select>` or `<textarea>`, and no inline `style`. | The `kit-only` rule. A screen may break it only while it is in the app's register with a reason and its count is in the baseline. The check also reports a register entry whose file is clean and a baseline above the true count, so both only go down. Console: `npm run lint` and `npm run design-contract`. Desktop: `npm run contract`. |
-| 6 | **Time has one grammar.** An instant is a UTC stamp, a day is `Nov 12, 2026`, a length is in words, and a number with a group separator comes from the number module. No locale-dependent string. | The `one-time` rule: no `toLocale*String` call and no `Intl.DateTimeFormat`, `RelativeTimeFormat` or `NumberFormat` outside the app's time and number modules, with a baseline count for a legacy file. Same commands as rule 5. |
-| 7 | **Motion comes from the tokens.** `duration-(--dur-2)`, `ease-out` or a `motion-*` class. No `duration-150`, `delay-*`, `ease-[..]` or `animate-[..]`, and no raw time in a style object's `transition` or `animation`. | The motion selector of `designContract`. The console also checks its CSS files with `npm run motion-contract` (a raw time or curve in `transition` or `animation`, and its script-driven timings against the tokens). The desktop's CSS has no such check yet. Same commands as rule 2. |
-| 8 | **No em dash** in any text a person reads. | The voice selector of `designContract`: an em dash in a string or in JSX text fails, except a lone one standing for no value. Same commands as rule 2. The console's `npm run test:words` reads every string in its screens for it too. Text outside TSX (CSS, Markdown) is caught in review. |
+| 6 | **Time has one grammar.** An instant is a UTC stamp, a day is `Nov 12, 2026`, a length is in words, and a number with a group separator comes from the number module. No locale-dependent string. | The `one-time` rule: no `toLocale*String` call and no `Intl.DateTimeFormat`, `RelativeTimeFormat` or `NumberFormat` outside the app's time and number modules, with a baseline count for a legacy file. Console: `npm run design-contract`. Desktop: `npm run contract`. |
+| 7 | **Motion comes from the tokens.** `duration-(--dur-2)`, `ease-out` or a `motion-*` class. No `duration-150`, `duration-[..]`, `delay-150`, `delay-[..]`, `ease-[..]` or `animate-[..]`, and no raw time in a style object's `transition` or `animation`. | The motion selector of `designContract`. The console also checks its CSS files with `npm run motion-contract` (a raw time or curve in `transition` or `animation`, and its script-driven timings against the tokens). The desktop's CSS has no such check yet. Same commands as rule 2. |
+| 8 | **No em dash** in any text a person reads. | The voice selector of `designContract`: an em dash in a string or in JSX text fails, except a lone one standing for no value, with no space on both sides of it. Same commands as rule 2. The console's `npm run test:words` reads every string in its screens for it too. Text outside TSX (CSS, Markdown) is caught in review. |
 | 9 | **A state is said with the shared words.** `STATUS[key]` gives the `word` and the `tone`, and a screen renders it with `StatusLabel`. The app maps the states of its API onto the keys with `satisfies Record<ApiUnion, StatusKey>`. A state whose word or tone differs from the table keeps its own, beside that map, with the reason. | The compiler: a state added to the API later fails `tsc` until it is mapped or left out on purpose. No lint rule reads a status word out of a screen, so a hand-typed word is caught in review. Desktop: every crew and station state goes through `StatusWord`. Console: the tones read `STATUS` where the table agrees, and two entries keep their own tone (`source.starting`, `resource.waiting`). |
 
 What no check sees (type voices, where amber may appear, figures, empty and loading states, tables) is
@@ -92,8 +92,7 @@ An exception goes in the app's register with its reason, and the reason names th
 contracts, so such a comment exempts nothing and the gate still fails.
 
 A register is not a way round a rule. A new entry needs a reason a reviewer accepts. A baseline only
-goes down: the app's baseline script lowers a count when a file improves, and raising one needs
-`--raise` and the reason in the PR.
+goes down: a count is lowered when a file improves, and raising one needs the reason in the PR.
 
 ## Embedded mode
 
