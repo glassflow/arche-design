@@ -22,6 +22,8 @@ The old dark warm-glass system (Archivo, `#ffa24b`) belongs to the ClickHouse ET
 
 ## Read order
 
+0. [`CONTRACT.md`](./CONTRACT.md) when you are building or checking an app: the rules every surface on
+   paper must follow, the check that enforces each, and how an app takes the shared tokens and kit.
 1. The project's `.impeccable.md` (root). It carries users, brand, direction, principles. If absent, copy
    `references/impeccable-template.md` there and adapt only the **Users** block.
 2. This file.
