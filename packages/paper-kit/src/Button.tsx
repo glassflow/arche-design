@@ -6,8 +6,7 @@ import { cn } from "./lib/cn";
 export type ButtonVariant = "primary" | "secondary" | "quiet";
 export type ButtonSize = "md" | "lg";
 
-// The edition names on top of the primitive's variants. Utilities that must beat the console's
-// unlayered `button` rules carry the important suffix, as in the primitive.
+// The edition names on top of the primitive's variants.
 const VARIANTS = {
   primary: { base: "default", extra: "border-foreground font-semibold hover:border-foreground" },
   secondary: { base: "outline", extra: "border-border bg-transparent hover:border-border hover:bg-muted" },
