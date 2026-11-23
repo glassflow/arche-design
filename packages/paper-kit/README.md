@@ -40,17 +40,22 @@ behaviour changed. `SearchSelect` stays in the console: it reads the console's d
 <StatusLabel tone={STATUS[key].tone}>{STATUS[key].word}</StatusLabel>
 ```
 
-The keys are plain strings, so the table imports no app type. Each app maps its own API states onto
-them, and lets the compiler check the map:
+The keys are plain strings, so the table imports no app type. Each app maps the states of its API onto
+them whose word and tone are the table's, and lets the compiler check the map:
 
 ```ts
-const KEY = { working: "running", idle: "ready" } satisfies Record<MemberState, StatusKey>;
+type TicketTurn = "building" | "waiting" | "done" | "idle"; // the app's API union
+const KEY = { building: "building", waiting: "waiting", done: "done" } satisfies Record<
+  Exclude<TicketTurn, "idle">,
+  StatusKey
+>;
 ```
 
-A state added to the API later then fails the build until it has a key. A state with no key here stays
-in the app, with its own word and tone. The words are the console's, in sentence case (the label draws
-them in capitals); a key the console had no word for takes the plain word its meaning gives, and a tone
-from the six `StatusLabel` explains.
+A state added to the API later then fails the build until it is mapped or left out on purpose. A state
+whose word or tone differs from the table (here `idle`, which reads Idle) keeps its own word and tone in
+the app, beside this map. The words are the console's, in sentence case (the label draws them in
+capitals); a key the console had no word for takes the plain word its meaning gives, and a tone from
+the six `StatusLabel` explains.
 
 ### Peer dependencies
 
