@@ -23,6 +23,13 @@ git clone git@github.com:glassflow/arche-design.git ~/Documents/code/glassflow/a
 Per project instead of globally: symlink into the project's `.claude/skills/` the same way.
 Skills are discovered by the `name:` in their frontmatter; keep it equal to the directory name.
 
+## The look-and-feel contract
+
+What every surface built on paper must follow, which check enforces each rule, and how an app takes the
+shared tokens and kit is written once, in
+[`skills/glassflow-paper-design/CONTRACT.md`](./skills/glassflow-paper-design/CONTRACT.md). An app's own
+`AGENTS.md` points there and holds only what is specific to the app.
+
 ## How the paper skill is kept true
 
 **arche-design is the source** of the paper tokens. Apps (the Tares console, the desktop app, and
@@ -58,7 +65,7 @@ re-copy it when the app moves, never hand-edit. A convention change lands with i
 
 ```
 skills/
-  glassflow-paper-design/      SKILL.md, references/{tokens.css, paper-theme.css, paper-motion.css, dress.css, impeccable-template.md}
+  glassflow-paper-design/      SKILL.md, CONTRACT.md, references/{tokens.css, paper-theme.css, paper-motion.css, dress.css, impeccable-template.md}
   glassflow-etl-ui-design/     SKILL.md, DESIGN.md, CLAUDE.md, references/DESIGN.md, fonts/ (Archivo, Inter — OFL)
 scripts/install.sh             symlink installer
 ```
