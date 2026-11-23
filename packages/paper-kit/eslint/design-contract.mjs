@@ -41,8 +41,9 @@
 // with the subset that still applies to it. Never add a second config object for a new selector.
 //
 // Options (all optional; paths are relative to `root`, with forward slashes):
-//   files          globs the contract runs on. Default ['src/**/*.{ts,tsx}'].
-//   ignores        globs left out of the selector rules. Default [].
+//   files          globs the contract runs on, every rule: the selectors, kit-only and one-time.
+//                  Default ['src/**/*.{ts,tsx}'].
+//   ignores        globs left out of the same rules. Default [].
 //   root           the app root, absolute (path.relative base for the per-file rules).
 //                  Default process.cwd().
 //   registers      { shadow: string[], stripe: string[], kit: { file: reason }, kitEdition: string[] }
@@ -50,13 +51,20 @@
 //                  path prefixes that make a file edition code.
 //   baselines      { time: { file: count }, kit: { file: count } } parsed JSON the app reads itself.
 //   paperProfile   true (default): the radius rule runs. false drops it for an app not on paper.
-//   doc            the sentence closing each selector message. Default 'See .impeccable.md and the
-//                  Console design section of AGENTS.md.'
+//   doc            the sentence closing each selector message, and kit-only's. Default
+//                  'See .impeccable.md.'
 //   appName        word for the one-time messages ('console', 'admin'). Default 'app'.
 //   kitOnly        { files, ignores, doc, registerFile, baselineFile, baselineCommand, kitDir }:
-//                  scope and message words for kit-only. Default files ['src/**/*.tsx'].
+//                  scope and message words for kit-only. `files` and `ignores` default to the
+//                  contract's own; give them to narrow kit-only (the console's kit primitives and
+//                  dev gallery go in `ignores`). `doc` defaults to the contract's.
 //   time           { modules, legacy, strict, doc, baselineFile, baselineCommand }: paths and
 //                  message words for one-time. See rules/one-time.mjs.
+//
+// What follows `files` and what does not: the globs above reach every rule. The PATH PREFIXES do
+// not: `registers.kitEdition`, `time.modules`, `time.legacy` and `time.strict` are matched against
+// each file's path from `root`, and the time defaults assume the console's `src/` layout. An app
+// whose code lives elsewhere sets them, or `one-time` treats every file as strict.
 
 import tseslint from 'typescript-eslint'
 import oneTime from './rules/one-time.mjs'
@@ -78,7 +86,7 @@ const WIDE = '^\\s*(?:[2-9]|[1-9]\\d+|1\\.\\d*[1-9])'
 // A dash with a space on both sides joins prose and fails even alone in its literal.
 const EM_DASH_PROSE = '^(?!\\s*—\\s*$)[\\s\\S]*—|[ \\t]—[ \\t]'
 
-const DEFAULT_DOC = 'See .impeccable.md and the Console design section of AGENTS.md.'
+const DEFAULT_DOC = 'See .impeccable.md.'
 const DEFAULT_FILES = ['src/**/*.{ts,tsx}']
 
 const strings = (re) => `Literal[value=/${re}/], TemplateElement[value.raw=/${re}/]`
@@ -165,6 +173,9 @@ export function designContract(options = {}) {
     kitOnlyConfig(
       {
         root,
+        doc,
+        files,
+        ignores,
         register: registers.kit ?? {},
         edition: registers.kitEdition ?? [],
         baseline: baselines.kit ?? {},
@@ -176,6 +187,7 @@ export function designContract(options = {}) {
     {
       ...base,
       files,
+      ...(ignores.length ? { ignores } : {}),
       plugins: { time: { rules: { 'one-time': oneTime } } },
       rules: { 'time/one-time': ['error', { baseline: baselines.time ?? {}, root, app: appName, ...time }] },
     },

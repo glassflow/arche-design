@@ -80,8 +80,8 @@ export default {
       number: modules[1] ?? MODULES[1],
       app: opts.app ?? 'app',
       doc: opts.doc ?? 'See the Time line in .impeccable.md.',
-      baselineFile: opts.baselineFile ?? 'time-contract.baseline.json',
-      baselineCommand: opts.baselineCommand ?? 'npm run time-baseline',
+      baselineFile: opts.baselineFile ?? "the app's time baseline file",
+      baselineCommand: opts.baselineCommand ?? "run the app's time baseline script",
     }
     const allowed = legacy ? (opts.baseline?.[file] ?? 0) : 0
     const hits = []

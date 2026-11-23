@@ -9,9 +9,11 @@
 //   rgb       rgb(…), rgba(…) with a number inside
 //   palette   a stock Tailwind palette utility: bg-amber-200, text-slate-500, ring-red-600/40
 //   utility   an arbitrary value naming a token that has a utility: text-[color:var(--err)] is
-//             text-err, bg-[var(--row-hover)] is bg-row-hover. The list of such tokens is read
-//             from `@theme inline` in the theme CSS, so a role added there is guarded the moment
-//             it exists. Tokens with no utility (the code palette) still pass.
+//             text-err, bg-[var(--row-hover)] is bg-row-hover. Tailwind 4's shorthand for the
+//             same value counts too: text-(--err), bg-(--row-hover), border-(color:--err). The
+//             list of such tokens is read from `@theme inline` in the theme CSS, so a role added
+//             there is guarded the moment it exists. Tokens with no utility (the code palette)
+//             still pass.
 //
 // CSS is exempt: the stylesheets hold the definitions, and they are outside a TSX gate anyway.
 // Raw palette variables (`var(--green-300)`) are tokens and pass; choosing a semantic one
@@ -82,7 +84,9 @@ export function tokenContract(options = {}) {
   const THEMED = themeCss.flatMap((f) => themedTokens(readFileSync(path.resolve(root, f), 'utf8')))
   THEMED.push(...extraTokens)
   if (THEMED.length < 20) throw new Error(`token-contract: could not read @theme inline from ${themeName}`)
-  const UTILITY = `-\\[(?:color:)?var\\(--(?:${[...new Set(THEMED)].join('|')})\\)\\]`
+  const NAMES = [...new Set(THEMED)].join('|')
+  // Both spellings of an arbitrary value: -[var(--x)] and Tailwind 4's shorthand -(--x).
+  const UTILITY = `-(?:\\[(?:color:)?var\\(--(?:${NAMES})\\)\\]|\\((?:color:)?--(?:${NAMES})\\))`
 
   const SELECTORS = {
     hex: { selector: strings(HEX), message: `A hex colour literal. ${DOC} (token-contract: hex)` },
@@ -93,7 +97,7 @@ export function tokenContract(options = {}) {
     },
     utility: {
       selector: strings(UTILITY),
-      message: `An arbitrary value for a token that has a utility: write text-err, not text-[color:var(--err)]. The roles and their names are in @theme inline in ${themeName} and in .impeccable.md. (token-contract: utility)`,
+      message: `An arbitrary value for a token that has a utility: write text-err, not text-[color:var(--err)] or text-(--err). The roles and their names are in @theme inline in ${themeName} and in .impeccable.md. (token-contract: utility)`,
     },
   }
 

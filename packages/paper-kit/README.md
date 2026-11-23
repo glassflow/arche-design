@@ -1,8 +1,8 @@
 # paper-kit
 
 The code half of the paper direction, shared by every app that wears it: the **ESLint contracts** in
-`eslint/` and the **components** in `src/` (Button, Dialog, Tabs, StatusLabel and the field controls so
-far; status words come later).
+`eslint/` and the **components** in `src/` (Button, Dialog, Tabs, StatusLabel, the field controls and the
+shared status words).
 
 An app does not import this folder from here. It vendors a tagged copy (`paper-kit-vN`) and never
 edits it. A change is made in this repo, tagged, and synced into the app.
@@ -22,6 +22,7 @@ they wrap under `ui/`, and `cn` in `lib/`. Import from the index, never from a f
 | `Select` | A labelled select from an `options` array (`value`, `label`), with `value` / `defaultValue` / `onValueChange`, `placeholder`, `name`, `required`, `disabled`; aria props and `data-testid` land on the trigger. Types `SelectProps`, `SelectOption`. |
 | `Checkbox`, `Switch` | A control with its label, hint and error beside it, over Radix's checkbox and switch. Types `CheckboxProps`, `SwitchProps`. |
 | `useFieldIds`, `fieldAria`, `FieldNote`, `StackedField`, `InlineField`, `ERROR_BORDER` | What the five controls share, for an app's own control that should read the same: the ids, the aria attributes (described by the hint and the error, invalid on error), the note and the two layouts (label above, or control then label). Type `FieldProps`. |
+| `STATUS`, `StatusKey` | The shared status words: for each key (`running`, `starting`, `stopping`, `stopped`, `failed`, `waiting_for_you`, `building`, `waiting`, `ready`, `done`, `blocked`, `not_started`) the `word` a person reads and the `tone` it takes. See "The status words" below. |
 | `cn` | `twMerge(clsx(...))`, for the app's own components beside these. |
 
 Two things differ from the console's files beyond import lines. The marks the primitives draw (the
@@ -30,6 +31,26 @@ where the console imports them from its icon set, so the kit has no icon depende
 that spoke of the console's own stylesheet are reworded, because they named rules the kit does not
 have (`lib/cn.ts` also drops the console's comment about generated shadcn files). No class string or
 behaviour changed. `SearchSelect` stays in the console: it reads the console's data.
+
+### The status words
+
+`STATUS[key]` is `{ word, tone }`, and `tone` is a `Tone`, so an entry goes straight to the label:
+
+```tsx
+<StatusLabel tone={STATUS[key].tone}>{STATUS[key].word}</StatusLabel>
+```
+
+The keys are plain strings, so the table imports no app type. Each app maps its own API states onto
+them, and lets the compiler check the map:
+
+```ts
+const KEY = { working: "running", idle: "ready" } satisfies Record<MemberState, StatusKey>;
+```
+
+A state added to the API later then fails the build until it has a key. A state with no key here stays
+in the app, with its own word and tone. The words are the console's, in sentence case (the label draws
+them in capitals); a key the console had no word for takes the plain word its meaning gives, and a tone
+from the six `StatusLabel` explains.
 
 ### Peer dependencies
 
@@ -72,7 +93,9 @@ Tailwind CSS 4 generates the classes (see below). `@types/react` 18 is needed fo
 7. **The app supplies the focus ring.** Button, the tab triggers, Checkbox, Switch, the select trigger
    and the dialog close carry no `focus-visible` utility, and the text controls only turn their border
    to `ring`. Give the app one global `:focus-visible` rule (an outline in the brand colour) so every
-   control shows keyboard focus the same way.
+   control shows keyboard focus the same way. In dark mode the text controls also fill with
+   `dark:focus:bg-field-focus` when focused, so the theme needs the `field-focus` colour role
+   (`--color-field-focus` in the vendored `paper-theme.css`).
 
 ## The ESLint contracts
 
@@ -106,7 +129,8 @@ own baselines and passes them in.
 - **one-time** time is said through the time module. Strict files have no allowance; legacy files
   carry at most their baseline count.
 - **token-contract** hex (`#fff`, `#e3c777`), `rgb()` / `rgba()` with a number, a stock Tailwind
-  palette utility (`bg-amber-200`), and `text-[color:var(--err)]` where `text-err` exists. The names
+  palette utility (`bg-amber-200`), and `text-[color:var(--err)]` or the Tailwind 4 shorthand
+  `text-(--err)` where `text-err` exists. The names
   that have a utility are read from `@theme inline` in your theme CSS, with `/* */` comments
   stripped first (a `}` in a comment inside the block used to end the match and lose the names after it).
 
@@ -116,17 +140,17 @@ All options are optional. Paths are relative to `root`, with forward slashes.
 
 | Option | Default | Meaning |
 |---|---|---|
-| `files` | `['src/**/*.{ts,tsx}']` | globs the selector rules and `one-time` run on |
-| `ignores` | `[]` | globs left out of the selector rules |
+| `files` | `['src/**/*.{ts,tsx}']` | globs every rule runs on: the selectors, `kit-only` and `one-time` |
+| `ignores` | `[]` | globs left out of those rules |
 | `root` | `process.cwd()` | the app root, absolute |
 | `registers.shadow`, `registers.stripe` | `[]` | files exempt from that selector |
 | `registers.kit` | `{}` | `{ "<file>": "<reason>" }`, the kit-only register |
 | `registers.kitEdition` | `[]` | path prefixes that make a file edition code for kit-only |
 | `baselines.time`, `baselines.kit` | `{}` | `{ "<file>": count }`, parsed from the app's JSON |
 | `paperProfile` | `true` | `false` drops the radius rule |
-| `doc` | points at `.impeccable.md` and the Console design section of AGENTS.md | closes each selector message |
+| `doc` | `'See .impeccable.md.'` | closes each selector message and `kit-only`'s |
 | `appName` | `'app'` | word in the one-time messages |
-| `kitOnly` | `{ files: ['src/**/*.tsx'] }` | `files`, `ignores` and message words (`doc`, `registerFile`, `baselineFile`, `baselineCommand`, `kitDir`) |
+| `kitOnly` | `files` and `ignores` as above | narrows `kit-only` with its own `files` and `ignores` (they replace, not add), and sets its message words (`doc`, `registerFile`, `baselineFile`, `baselineCommand`, `kitDir`; the defaults name no app) |
 | `time` | the paper convention | `modules` (`['src/lib/time.ts', 'src/lib/number.ts']`), `legacy`, `strict` path prefixes and message words |
 
 ### `tokenContract(options)`
