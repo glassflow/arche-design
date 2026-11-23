@@ -1,10 +1,62 @@
 # paper-kit
 
-The code half of the paper direction, shared by every app that wears it. Today that is the **ESLint
-contracts** in `eslint/`; primitives and field controls arrive in `src/` later.
+The code half of the paper direction, shared by every app that wears it: the **ESLint contracts** in
+`eslint/` and the **components** in `src/` (Button, Dialog, Tabs and StatusLabel so far; field controls
+and status words come later).
 
 An app does not import this folder from here. It vendors a tagged copy (`paper-kit-vN`) and never
 edits it. A change is made in this repo, tagged, and synced into the app.
+
+## The components
+
+`src/` is the console's own code, moved as is: the four components on top, the shadcn-style primitives
+they wrap under `ui/`, and `cn` in `lib/`. Import from the index, never from a file inside.
+
+| Export | What it is |
+|---|---|
+| `Button` | `variant` `primary` / `secondary` / `quiet`, `size` `md` / `lg`, `busy`, `asChild` (a link that is inert gets `aria-disabled` and no pointer events). Types `ButtonProps`, `ButtonVariant`, `ButtonSize`. |
+| `Dialog` | A titled, described modal: `trigger`, `title`, `description` (both required), `children`, `footer`, controlled with `open` and `onOpenChange`. Type `DialogProps`. |
+| `Tabs` | Tabs from an `items` array (`value`, `label`, `content`, `disabled`), with the sliding underline. Types `TabsProps`, `TabItem`. |
+| `StatusLabel`, `StatusDot` | A status as a mono word with a 1px underline, and its dot. A page passes a `tone` (`working`, `waiting`, `ready`, `done`, `bad`, `quiet`); the type is `Tone`. A tone that changes while the reader watches washes once. |
+| `cn` | `twMerge(clsx(...))`, for the app's own components beside these. |
+
+One thing differs from the console's files beyond import lines, in `ui/dialog.tsx`: the close mark is
+the same 24x24 stroke path inlined, where the console imports it from its icon set, so the kit has no
+icon dependency. The console's comment about generated shadcn files is left out of `lib/cn.ts`.
+
+### Peer dependencies
+
+This repo has no `package.json`, so nothing is installed from here. The app installs these itself, at
+the exact versions it already runs (the console's resolved versions today):
+
+| Package | Version |
+|---|---|
+| `react`, `react-dom` | 18.3.1 |
+| `@radix-ui/react-dialog` | 1.3.1 |
+| `@radix-ui/react-tabs` | 1.2.1 |
+| `@radix-ui/react-slot` | 1.5.0 |
+| `class-variance-authority` | 0.7.1 |
+| `clsx` | 2.1.1 |
+| `tailwind-merge` | 3.7.0 |
+
+Tailwind CSS 4 generates the classes (see below). `@types/react` 18 is needed for the types.
+
+### Consumer setup
+
+1. **Vendor `src/`** from a tagged copy into the app (for example `src/paper-kit/`).
+2. **A path alias** `@paper-kit` to the vendored `src` (`tsconfig` `paths` and the bundler's alias), and
+   import from `@paper-kit`.
+3. **Tailwind `@source`** pointing at the vendored `src`, in the app's main stylesheet, so the classes
+   the components carry are generated: `@source "./paper-kit/src";` (path relative to that stylesheet).
+4. **The paper CSS**, imported after Tailwind: `paper-theme.css` (the role layer: `bg-brand`, `text-ok`,
+   `bg-primary-hover` and the other utilities the classes name) and `paper-motion.css` (the `motion-*`
+   classes: `motion-dialog`, `motion-scrim`, `motion-tabs`, `motion-wash`). Without the second the
+   components work but do not move.
+5. **Strict types**: the code type-checks under `strict`, `noUncheckedIndexedAccess`, `target` ES2023,
+   `jsx` `react-jsx` and `moduleResolution` `bundler`. An app that lints may ignore the vendored folder
+   (it is checked here) or run the contracts below over it.
+6. **Bare `button` rules go in a layer.** An app whose own stylesheet has unlayered `button { ... }`
+   rules would beat the primitive's utilities; put those rules in a cascade layer.
 
 ## The ESLint contracts
 
@@ -118,6 +170,10 @@ not work in the gate anyway).
 
 ### Checking a change
 
-There is no CI here. Copy `packages/paper-kit` into a consumer's vendored place, point its two
+There is no CI here. For `src/`, copy it into a console worktree's `ui/paper-kit/src`, add a scratch
+`tsconfig` with the flags above and `include: ["paper-kit/src"]`, and run `tsc --noEmit`; then run the
+design and token contracts over `paper-kit/src` with empty registers: both must print nothing.
+
+For `eslint/`: Copy `packages/paper-kit` into a consumer's vendored place, point its two
 contract configs at the factories, run its design and token contracts on the tree with and without
 the change, and compare the `ruleId`, file and line of every message.
