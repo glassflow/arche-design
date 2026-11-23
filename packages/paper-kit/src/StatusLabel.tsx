@@ -2,8 +2,8 @@ import * as React from "react";
 
 import { cn } from "./lib/cn";
 
-/** How a status reads. A page never picks a tone: it looks its status up in a table in
- *  statusTones.ts, so the same state reads the same way everywhere. */
+/** How a status reads. A page never picks a tone: it looks its status up in one table the
+ *  app keeps, so the same state reads the same way everywhere. */
 export type Tone = "working" | "waiting" | "ready" | "done" | "bad" | "quiet";
 
 // States are typographic (.impeccable.md): a mono word with a 1px underline. Amber is for live work

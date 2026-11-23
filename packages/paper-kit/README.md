@@ -1,15 +1,15 @@
 # paper-kit
 
 The code half of the paper direction, shared by every app that wears it: the **ESLint contracts** in
-`eslint/` and the **components** in `src/` (Button, Dialog, Tabs and StatusLabel so far; field controls
-and status words come later).
+`eslint/` and the **components** in `src/` (Button, Dialog, Tabs, StatusLabel and the field controls so
+far; status words come later).
 
 An app does not import this folder from here. It vendors a tagged copy (`paper-kit-vN`) and never
 edits it. A change is made in this repo, tagged, and synced into the app.
 
 ## The components
 
-`src/` is the console's own code, moved as is: the four components on top, the shadcn-style primitives
+`src/` is the console's own code, moved as is: the components on top, the shadcn-style primitives
 they wrap under `ui/`, and `cn` in `lib/`. Import from the index, never from a file inside.
 
 | Export | What it is |
@@ -18,11 +18,18 @@ they wrap under `ui/`, and `cn` in `lib/`. Import from the index, never from a f
 | `Dialog` | A titled, described modal: `trigger`, `title`, `description` (both required), `children`, `footer`, controlled with `open` and `onOpenChange`. Type `DialogProps`. |
 | `Tabs` | Tabs from an `items` array (`value`, `label`, `content`, `disabled`), with the sliding underline. Types `TabsProps`, `TabItem`. |
 | `StatusLabel`, `StatusDot` | A status as a mono word with a 1px underline, and its dot. A page passes a `tone` (`working`, `waiting`, `ready`, `done`, `bad`, `quiet`); the type is `Tone`. A tone that changes while the reader watches washes once. |
+| `Input`, `Textarea` | A labelled text control: `label` (required), `hint`, `error`, then every native prop; a ref and `data-testid` reach the control itself. Types `InputProps`, `TextareaProps`. |
+| `Select` | A labelled select from an `options` array (`value`, `label`), with `value` / `defaultValue` / `onValueChange`, `placeholder`, `name`, `required`, `disabled`; aria props and `data-testid` land on the trigger. Types `SelectProps`, `SelectOption`. |
+| `Checkbox`, `Switch` | A control with its label, hint and error beside it, over Radix's checkbox and switch. Types `CheckboxProps`, `SwitchProps`. |
+| `useFieldIds`, `fieldAria`, `FieldNote`, `StackedField`, `InlineField`, `ERROR_BORDER` | What the five controls share, for an app's own control that should read the same: the ids, the aria attributes (described by the hint and the error, invalid on error), the note and the two layouts (label above, or control then label). Type `FieldProps`. |
 | `cn` | `twMerge(clsx(...))`, for the app's own components beside these. |
 
-One thing differs from the console's files beyond import lines, in `ui/dialog.tsx`: the close mark is
-the same 24x24 stroke path inlined, where the console imports it from its icon set, so the kit has no
-icon dependency. The console's comment about generated shadcn files is left out of `lib/cn.ts`.
+Two things differ from the console's files beyond import lines. The marks the primitives draw (the
+dialog's close, the select's chevron, the checkmark) are the same 24x24 stroke paths in `ui/icons.tsx`,
+where the console imports them from its icon set, so the kit has no icon dependency. And a few comments
+that spoke of the console's own stylesheet are reworded, because they named rules the kit does not
+have (`lib/cn.ts` also drops the console's comment about generated shadcn files). No class string or
+behaviour changed. `SearchSelect` stays in the console: it reads the console's data.
 
 ### Peer dependencies
 
@@ -34,6 +41,9 @@ the exact versions it already runs (the console's resolved versions today):
 | `react`, `react-dom` | 18.3.1 |
 | `@radix-ui/react-dialog` | 1.3.1 |
 | `@radix-ui/react-tabs` | 1.2.1 |
+| `@radix-ui/react-select` | 2.4.1 |
+| `@radix-ui/react-checkbox` | 1.4.1 |
+| `@radix-ui/react-switch` | 1.4.1 |
 | `@radix-ui/react-slot` | 1.5.0 |
 | `class-variance-authority` | 0.7.1 |
 | `clsx` | 2.1.1 |
@@ -54,9 +64,15 @@ Tailwind CSS 4 generates the classes (see below). `@types/react` 18 is needed fo
    components work but do not move.
 5. **Strict types**: the code type-checks under `strict`, `noUncheckedIndexedAccess`, `target` ES2023,
    `jsx` `react-jsx` and `moduleResolution` `bundler`. An app that lints may ignore the vendored folder
-   (it is checked here) or run the contracts below over it.
-6. **Bare `button` rules go in a layer.** An app whose own stylesheet has unlayered `button { ... }`
-   rules would beat the primitive's utilities; put those rules in a cascade layer.
+   (it is checked here) or run the contracts below over it, with `src/ui/**` out of the `kit-only`
+   rule: the primitives there are the raw `<input>` and `<textarea>` the components wrap, as the
+   console's own `components/ui` is.
+6. **Bare element rules go in a layer.** An app whose own stylesheet has unlayered `button { ... }`
+   or `input { ... }` rules would beat the primitives' utilities; put those rules in a cascade layer.
+7. **The app supplies the focus ring.** Button, the tab triggers, Checkbox, Switch, the select trigger
+   and the dialog close carry no `focus-visible` utility, and the text controls only turn their border
+   to `ring`. Give the app one global `:focus-visible` rule (an outline in the brand colour) so every
+   control shows keyboard focus the same way.
 
 ## The ESLint contracts
 
@@ -172,7 +188,8 @@ not work in the gate anyway).
 
 There is no CI here. For `src/`, copy it into a console worktree's `ui/paper-kit/src`, add a scratch
 `tsconfig` with the flags above and `include: ["paper-kit/src"]`, and run `tsc --noEmit`; then run the
-design and token contracts over `paper-kit/src` with empty registers: both must print nothing.
+design and token contracts over `paper-kit/src` with empty registers (and `ui/**` in `kitOnly.ignores`):
+both must print nothing.
 
 For `eslint/`: Copy `packages/paper-kit` into a consumer's vendored place, point its two
 contract configs at the factories, run its design and token contracts on the tree with and without
