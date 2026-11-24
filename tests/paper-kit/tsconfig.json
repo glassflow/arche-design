@@ -1,0 +1,31 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "target": "ES2023",
+    "lib": [
+      "ES2023",
+      "DOM",
+      "DOM.Iterable"
+    ],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "jsx": "react-jsx",
+    "types": [
+      "vitest/globals"
+    ],
+    "skipLibCheck": true,
+    "noEmit": true,
+    "paths": {
+      "*": [
+        "./node_modules/@types/*",
+        "./node_modules/*"
+      ]
+    }
+  },
+  "include": [
+    "../../packages/paper-kit/src",
+    "src",
+    "setup.ts"
+  ]
+}

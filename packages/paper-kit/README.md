@@ -21,7 +21,8 @@ they wrap under `ui/`, and `cn` in `lib/`. Import from the index, never from a f
 | `Input`, `Textarea` | A labelled text control: `label` (required), `hint`, `error`, then every native prop; a ref and `data-testid` reach the control itself. Types `InputProps`, `TextareaProps`. |
 | `Select` | A labelled select from an `options` array (`value`, `label`), with `value` / `defaultValue` / `onValueChange`, `placeholder`, `name`, `required`, `disabled`; aria props and `data-testid` land on the trigger. Types `SelectProps`, `SelectOption`. |
 | `Checkbox`, `Switch` | A control with its label, hint and error beside it, over Radix's checkbox and switch. Types `CheckboxProps`, `SwitchProps`. |
-| `useFieldIds`, `fieldAria`, `FieldNote`, `StackedField`, `InlineField`, `ERROR_BORDER` | What the five controls share, for an app's own control that should read the same: the ids, the aria attributes (described by the hint and the error, invalid on error), the note and the two layouts (label above, or control then label). Type `FieldProps`. |
+| `RadioGroup` | One choice from a few: a `label` for the group (required), `hint`, `error`, and `options` (`value`, `label`, `hint`, `disabled`), each with its own label beside a round mark. `value` / `defaultValue` / `onValueChange`, `name` (the choice joins a form), `required`, `disabled`, `orientation`; `data-testid` and `className` land on the group. Over Radix's radio group. Types `RadioGroupProps`, `RadioOption`. See "The radio group" below. |
+| `useFieldIds`, `fieldAria`, `FieldNote`, `StackedField`, `InlineField`, `ERROR_BORDER` | What the six controls share, for an app's own control that should read the same: the ids, the aria attributes (described by the hint and the error, invalid on error), the note and the two layouts (label above, or control then label). Type `FieldProps`. |
 | `STATUS`, `StatusKey` | The shared status words: for each key (`running`, `starting`, `stopping`, `stopped`, `failed`, `waiting_for_you`, `building`, `waiting`, `ready`, `done`, `blocked`, `not_started`) the `word` a person reads and the `tone` it takes. See "The status words" below. |
 | `cn` | `twMerge(clsx(...))`, for the app's own components beside these. |
 
@@ -57,9 +58,41 @@ the app, beside this map. The words are the console's, in sentence case (the lab
 capitals); a key the console had no word for takes the plain word its meaning gives, and a tone from
 the six `StatusLabel` explains.
 
+### The radio group
+
+```tsx
+<RadioGroup
+  label="Keep in the tray"
+  options={[
+    { value: "automatic", label: "Automatic" },
+    { value: "off", label: "Off" },
+  ]}
+  value={tray}
+  onValueChange={setTray}
+/>
+```
+
+A one-of-two (or three) choice: the group has a label, each option has its own. A `hint` under the
+group or under one option is read after its name. For a row instead of a stack, pass
+`orientation="horizontal"`.
+
+- **Keyboard.** The group is one tab stop, on the chosen option (or the first). The arrow keys move to
+  the next or previous option and choose it, wrapping at the ends; a disabled option is skipped. Left
+  and Up go back, Right and Down go forward, unless `orientation` is set, and then only the arrows
+  along it move.
+- **Screen readers.** The group is a `radiogroup` named by its label, each option a `radio` named by
+  its label, `aria-checked` says which is chosen, and the hints and the error are its description. An
+  `error` sets `aria-invalid` on the group and turns the marks' border to the error colour.
+- **The look.** The mark is round (`rounded-full`, the contract's mark for a dot), where the checkbox is
+  square: a reader tells one-of from many-of by it. Its ring is a 1px `border-input` and takes
+  `border-primary` with a `bg-primary` dot when chosen, as the checkbox does; a disabled mark dims to
+  45%. Like the other controls it carries no focus ring: the app's one `:focus-visible` rule shows the
+  keyboard focus.
+- **A form.** Pass `name` and the chosen value goes in the form under it.
+
 ### Peer dependencies
 
-This repo has no `package.json`, so nothing is installed from here. The app installs these itself, at
+The kit has no `package.json`, so nothing is installed from it (the one in `tests/paper-kit/` is only for the tests). The app installs these itself, at
 the exact versions it already runs (the console's resolved versions today):
 
 | Package | Version |
@@ -70,6 +103,7 @@ the exact versions it already runs (the console's resolved versions today):
 | `@radix-ui/react-select` | 2.4.1 |
 | `@radix-ui/react-checkbox` | 1.4.1 |
 | `@radix-ui/react-switch` | 1.4.1 |
+| `@radix-ui/react-radio-group` | 1.5.1 |
 | `@radix-ui/react-slot` | 1.5.0 |
 | `class-variance-authority` | 0.7.1 |
 | `clsx` | 2.1.1 |
@@ -95,7 +129,7 @@ Tailwind CSS 4 generates the classes (see below). `@types/react` 18 is needed fo
    console's own `components/ui` is.
 6. **Bare element rules go in a layer.** An app whose own stylesheet has unlayered `button { ... }`
    or `input { ... }` rules would beat the primitives' utilities; put those rules in a cascade layer.
-7. **The app supplies the focus ring.** Button, the tab triggers, Checkbox, Switch, the select trigger
+7. **The app supplies the focus ring.** Button, the tab triggers, Checkbox, Switch, the radios, the select trigger
    and the dialog close carry no `focus-visible` utility, and the text controls only turn their border
    to `ring`. Give the app one global `:focus-visible` rule (an outline in the brand colour) so every
    control shows keyboard focus the same way. In dark mode the text controls also fill with
@@ -215,7 +249,10 @@ not work in the gate anyway).
 
 ### Checking a change
 
-There is no CI here. For `src/`, copy it into a console worktree's `ui/paper-kit/src`, add a scratch
+There is no CI here. The components' behaviour tests live in `tests/paper-kit/` at the root of this repo,
+outside the vendored folder: `cd tests/paper-kit && npm ci && npm run typecheck && npm test` type-checks
+`src/` under the strict flags above and runs the specs (the radio group's roles, keyboard, disabled and
+form behaviour, and its likeness to the checkbox). To check a change to `src/` in an app as well, copy it into a console worktree's `ui/paper-kit/src`, add a scratch
 `tsconfig` with the flags above and `include: ["paper-kit/src"]`, and run `tsc --noEmit`; then run the
 design and token contracts over `paper-kit/src` with empty registers (and `ui/**` in `kitOnly.ignores`):
 both must print nothing.

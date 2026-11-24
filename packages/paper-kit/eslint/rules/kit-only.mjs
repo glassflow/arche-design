@@ -4,7 +4,7 @@
 //            utilities; a value only known at run time (a chart's computed width, a column count
 //            from data) is the one honest use, and it lives in the app's register with its reason.
 //   control  a raw <button>, <input>, <select> or <textarea>. The kit has Button, Input, Select,
-//            Textarea, Checkbox and Switch.
+//            Textarea, Checkbox, Switch and RadioGroup.
 //
 // Two scopes, one count per file:
 //
@@ -30,7 +30,7 @@ import path from 'node:path'
 const CONTROLS = new Set(['button', 'input', 'select', 'textarea'])
 const KIT = {
   button: 'Button',
-  input: 'Input (or Checkbox, Switch)',
+  input: 'Input (or Checkbox, Switch, RadioGroup)',
   select: 'Select',
   textarea: 'Textarea',
 }
