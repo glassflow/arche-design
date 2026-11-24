@@ -40,7 +40,7 @@ An app imports `paper-theme.css` and `paper-motion.css`, never `tokens.css` besi
 `packages/paper-kit/` is the code half, vendored the same way (`paper-kit-vN`):
 
 - `src/`: Button, Dialog, Tabs, StatusLabel and StatusDot, the field controls (Input, Textarea, Select,
-  Checkbox, Switch) and their helpers, the shared status words, and `cn`.
+  Checkbox, Switch, RadioGroup) and their helpers, the shared status words, and `cn`.
 - `eslint/`: the factories that run the rules below, `designContract(options)` and
   `tokenContract(options)`, and the two rules they carry, `kit-only` and `one-time`.
 
@@ -48,7 +48,7 @@ The app takes the kit with the steps in [`packages/paper-kit/README.md`](../../p
 "Consumer setup". In short:
 
 - **The peers.** The app installs the kit's peer dependencies itself, at the exact versions the README
-  lists. This repository has no `package.json` and installs nothing.
+  lists. The kit has no `package.json` and installs nothing.
 - **The alias.** `@paper-kit` points at the vendored `src`, in `tsconfig` `paths` and in the bundler.
   Screens import from `@paper-kit`, never from a file inside it.
 - **`@source`.** The app's main stylesheet has `@source "<path to the vendored src>";`, so Tailwind
